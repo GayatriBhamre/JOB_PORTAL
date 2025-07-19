@@ -6,11 +6,13 @@ A job portal built with the MERN stack that allows users to browse jobs, apply o
 
 ##  Features
 
-- **User Authentication** with JWT
-- **Job Listings** stored in MongoDB
-- **Application Management** for seekers and employers
-- **Image Upload** via Cloudinary
-- **Responsive Design** for all devices
+- *User Authentication & Authorization**  
+✅ **Post & Apply to Jobs**  
+✅ **Job Search with Filters**  
+✅ **Cloudinary Image Upload** 
+✅ **JobBot Chat Assistant** 
+✅ **Admin Dashboard for Job & User Management**  
+
 
 ---
 
