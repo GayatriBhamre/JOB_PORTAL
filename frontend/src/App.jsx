@@ -1,3 +1,4 @@
+import InterviewPrep from "./components/InterviewPrep/InterviewPrep";
 import React, { useContext, useEffect } from "react";
 import "./App.css";
 import { Context } from "./main";
@@ -16,9 +17,14 @@ import MyApplications from "./components/Application/MyApplications";
 import PostJob from "./components/Job/PostJob";
 import NotFound from "./components/NotFound/NotFound";
 import MyJobs from "./components/Job/MyJobs";
+import socket from "./socket"; 
+import JobBot from "./components/JobBot/JobBot"; 
+
+
 
 const App = () => {
   const { isAuthorized, setIsAuthorized, setUser } = useContext(Context);
+
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -35,7 +41,18 @@ const App = () => {
       }
     };
     fetchUser();
-  }, [isAuthorized]);
+  }, [isAuthorized, setIsAuthorized, setUser]);
+
+  // Listen for real-time notifications
+  useEffect(() => {
+    socket.on("notification", (data) => {
+      alert(`Notification: ${data.message}`);
+    });
+
+    return () => {
+      socket.off("notification");
+    };
+  }, []);
 
   return (
     <>
@@ -45,13 +62,16 @@ const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/" element={<Home />} />
-          <Route path="/job/getall" element={<Jobs />} />
-          <Route path="/job/:id" element={<JobDetails />} />
+           <Route path="/job/getall" element={<Jobs />} />
+           <Route path="/job/:id" element={<JobDetails />} />
           <Route path="/application/:id" element={<Application />} />
           <Route path="/applications/me" element={<MyApplications />} />
           <Route path="/job/post" element={<PostJob />} />
           <Route path="/job/me" element={<MyJobs />} />
           <Route path="*" element={<NotFound />} />
+          <Route path="/interview-prep" element={<InterviewPrep />} />
+          <Route path="/jobbot" element={<JobBot />} />
+
         </Routes>
         <Footer />
         <Toaster />

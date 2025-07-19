@@ -33,7 +33,7 @@ const PopularCategories = () => {
     {
       id: 4,
       title: "MERN STACK Development",
-      subTitle: "1000+ Open Postions",
+      subTitle: "1000+ Open Positions",
       icon: <FaReact />,
     },
     {
@@ -61,6 +61,7 @@ const PopularCategories = () => {
       icon: <IoGameController />,
     },
   ];
+
   return (
     <div className="categories">
       <h3>POPULAR CATEGORIES</h3>
@@ -70,13 +71,66 @@ const PopularCategories = () => {
             <div className="card" key={element.id}>
               <div className="icon">{element.icon}</div>
               <div className="text">
-                <p>{element.title}</p>
-                <p>{element.subTitle}</p>
+                <p className="title">{element.title}</p>
+                <p className="subtitle">{element.subTitle}</p>
               </div>
             </div>
           );
         })}
       </div>
+
+      {/* ✅ Inline CSS style block */}
+      <style jsx="true">{`
+        .categories {
+          padding: 40px 20px;
+          background: #f8f9fa;
+          text-align: center;
+        }
+
+        .categories h3 {
+          font-size: 28px;
+          margin-bottom: 30px;
+          color: #222;
+        }
+
+        .banner {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+          gap: 20px;
+        }
+
+        .card {
+          background: #fff;
+          border-radius: 12px;
+          padding: 25px 20px;
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+          cursor: pointer;
+        }
+
+        .card:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        .icon {
+          font-size: 40px;
+          color: #007bff;
+          margin-bottom: 15px;
+        }
+
+        .title {
+          font-weight: 600;
+          font-size: 16px;
+          color: #333;
+          margin-bottom: 4px;
+        }
+
+        .subtitle {
+          font-size: 14px;
+          color: #777;
+        }
+      `}</style>
     </div>
   );
 };

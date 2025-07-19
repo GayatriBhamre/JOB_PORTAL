@@ -1,9 +1,10 @@
+import { sendMail } from "../utils/sendMail.js";
+import { User } from "../models/userModel.js";
 import { catchAsyncErrors } from "../middlewares/catchAsyncError.js";
 import ErrorHandler from "../middlewares/error.js";
 import { Application } from "../models/applicationSchema.js";
 import { Job } from "../models/jobSchema.js";
 import cloudinary from "cloudinary";
-
 export const postApplication = catchAsyncErrors(async (req, res, next) => {
   const { role } = req.user;
   if (role === "Employer") {
@@ -11,7 +12,7 @@ export const postApplication = catchAsyncErrors(async (req, res, next) => {
       new ErrorHandler("Employer not allowed to access this resource.", 400)
     );
   }
-  
+
   if (!req.files || Object.keys(req.files).length === 0) {
     return next(new ErrorHandler("Resume File Required!", 400));
   }
@@ -23,7 +24,7 @@ export const postApplication = catchAsyncErrors(async (req, res, next) => {
       new ErrorHandler("Invalid file type. Please upload a PNG, JPEG, or WEBP file.", 400)
     );
   }
-  
+
   try {
     const cloudinaryResponse = await cloudinary.uploader.upload(
       resume.tempFilePath
@@ -36,17 +37,17 @@ export const postApplication = catchAsyncErrors(async (req, res, next) => {
       );
       return next(new ErrorHandler("Failed to upload Resume to Cloudinary", 500));
     }
-    
+
     const { name, email, coverLetter, phone, address, jobId } = req.body;
     const applicantID = {
       user: req.user._id,
       role: "Job Seeker",
     };
-    
+
     if (!jobId) {
       return next(new ErrorHandler("Job not found!", 404));
     }
-    
+
     const jobDetails = await Job.findById(jobId);
     if (!jobDetails) {
       return next(new ErrorHandler("Job not found!", 404));
@@ -56,7 +57,7 @@ export const postApplication = catchAsyncErrors(async (req, res, next) => {
       user: jobDetails.postedBy,
       role: "Employer",
     };
-    
+
     if (
       !name ||
       !email ||
@@ -69,7 +70,7 @@ export const postApplication = catchAsyncErrors(async (req, res, next) => {
     ) {
       return next(new ErrorHandler("Please fill all fields.", 400));
     }
-    
+
     const application = await Application.create({
       name,
       email,
@@ -83,23 +84,43 @@ export const postApplication = catchAsyncErrors(async (req, res, next) => {
         url: cloudinaryResponse.secure_url,
       },
     });
-    
+
+    // ✅ FETCH employer details
+    const employer = await User.findById(jobDetails.postedBy);
+
+    // ✅ Send Email to Employer
+    if (employer && employer.email) {
+      await sendMail(
+        employer.email,
+        "New Job Application Received",
+        `Hello ${employer.name || "Employer"},\n\nYou received a new application from ${name}.\n\nCheck your dashboard for details.`
+      );
+    }
+
+    // ✅ Send Email to Applicant
+    if (email) {
+      await sendMail(
+        email,
+        "Your Application was Submitted",
+        `Hi ${name},\n\nThank you for applying for the position "${jobDetails.title}". Your application has been sent to the employer.\n\nBest of luck!`
+      );
+    }
+
     res.status(200).json({
       success: true,
-      message: "Application Submitted!",
+      message: "Application Submitted! Notification Emails Sent!",
       application,
     });
   } catch (error) {
-    // Handle Cloudinary specific errors
     if (error.message && error.message.includes("api_key")) {
       console.error("Cloudinary API key error:", error.message);
       return next(new ErrorHandler("File upload service configuration error", 500));
     }
-    
-    // Handle any other errors
+
     return next(error);
   }
 });
+
 
 export const employerGetAllApplications = catchAsyncErrors(
   async (req, res, next) => {

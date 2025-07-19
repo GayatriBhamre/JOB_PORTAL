@@ -1,5 +1,5 @@
 import React from "react";
-import { FaMicrosoft, FaApple } from "react-icons/fa";
+import { FaMicrosoft, FaApple, FaAmazon, FaGoogle } from "react-icons/fa";
 import { SiTesla } from "react-icons/si";
 
 const PopularCompanies = () => {
@@ -7,25 +7,40 @@ const PopularCompanies = () => {
     {
       id: 1,
       title: "Microsoft",
-      location: "Millennium City Centre, Gurugram",
+      location: "Gachibowli, Hyderabad",
       openPositions: 10,
       icon: <FaMicrosoft />,
     },
     {
       id: 2,
       title: "Tesla",
-      location: "Millennium City Centre, Gurugram",
+      location: "Whitefield, Bengaluru",
       openPositions: 5,
       icon: <SiTesla />,
     },
     {
       id: 3,
       title: "Apple",
-      location: "Millennium City Centre, Gurugram",
+      location: "BKC, Mumbai",
       openPositions: 20,
       icon: <FaApple />,
     },
+    {
+      id: 4,
+      title: "Google",
+      location: "Hinjewadi, Pune",
+      openPositions: 12,
+      icon: <FaGoogle />,
+    },
+    {
+      id: 5,
+      title: "Amazon",
+      location: "Financial District, Hyderabad",
+      openPositions: 15,
+      icon: <FaAmazon />,
+    },
   ];
+
   return (
     <div className="companies">
       <div className="container">

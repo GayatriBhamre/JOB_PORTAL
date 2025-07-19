@@ -3,6 +3,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { Context } from "../../main";
+
 const PostJob = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -21,7 +22,7 @@ const PostJob = () => {
     e.preventDefault();
     if (salaryType === "Fixed Salary") {
       setSalaryFrom("");
-      setSalaryFrom("");
+      setSalaryTo("");
     } else if (salaryType === "Ranged Salary") {
       setFixedSalary("");
     } else {
@@ -91,29 +92,26 @@ const PostJob = () => {
               >
                 <option value="">Select Category</option>
                 <option value="Graphics & Design">Graphics & Design</option>
-                <option value="Mobile App Development">
-                  Mobile App Development
-                </option>
-                <option value="Frontend Web Development">
-                  Frontend Web Development
-                </option>
-                <option value="Business Development Executive">
-                Business Development Executive
-                </option>
+                <option value="Mobile App Development">Mobile App Development</option>
+                <option value="Frontend Web Development">Frontend Web Development</option>
+                <option value="Business Development Executive">Business Development Executive</option>
                 <option value="Account & Finance">Account & Finance</option>
-                <option value="Artificial Intelligence">
-                  Artificial Intelligence
-                </option>
-                <option value="Video Animation">Video Animation</option>
-                <option value="MEAN Stack Development">
-                  MEAN STACK Development
-                </option>
-                <option value="MERN Stack Development">
-                  MERN STACK Development
-                </option>
+                <option value="Artificial Intelligence">Artificial Intelligence</option>
+                <option value="Backend Developer">Video Animation</option>
+                <option value="MEAN Stack Development">MEAN STACK Development</option>
+                <option value="MERN Stack Development">MERN STACK Development</option>
                 <option value="Data Entry Operator">Data Entry Operator</option>
+                {/* New categories added */}
+                <option value="Cloud Computing">Cloud Computing</option>
+                <option value="Cybersecurity">Cybersecurity</option>
+                <option value="Blockchain Development">Blockchain Development</option>
+                <option value="DevOps Engineering">DevOps Engineering</option>
+                <option value="Game Development">Game Development</option>
+                <option value="Software Developer">Software Developer</option>
+                <option value="Full Stack Devloper">Game Development</option>
               </select>
             </div>
+
             <div className="wrapper">
               <input
                 type="text"
@@ -128,12 +126,14 @@ const PostJob = () => {
                 placeholder="City"
               />
             </div>
+
             <input
               type="text"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
               placeholder="Location"
             />
+
             <div className="salary_wrapper">
               <select
                 value={salaryType}
@@ -143,6 +143,7 @@ const PostJob = () => {
                 <option value="Fixed Salary">Fixed Salary</option>
                 <option value="Ranged Salary">Ranged Salary</option>
               </select>
+
               <div>
                 {salaryType === "default" ? (
                   <p>Please provide Salary Type *</p>
@@ -171,12 +172,14 @@ const PostJob = () => {
                 )}
               </div>
             </div>
+
             <textarea
               rows="10"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Job Description"
             />
+
             <button type="submit">Create Job</button>
           </form>
         </div>

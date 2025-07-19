@@ -1,5 +1,6 @@
 import { catchAsyncErrors } from "../middlewares/catchAsyncError.js";
 import { Job } from "../models/jobSchema.js";
+import { User } from "../models/userModel.js";
 import ErrorHandler from "../middlewares/error.js";
 
 export const getAllJobs = catchAsyncErrors(async (req, res, next) => {
@@ -124,17 +125,36 @@ export const deleteJob = catchAsyncErrors(async (req, res, next) => {
 });
 
 export const getSingleJob = catchAsyncErrors(async (req, res, next) => {
-  const { id } = req.params;
-  try {
-    const job = await Job.findById(id);
-    if (!job) {
-      return next(new ErrorHandler("Job not found.", 404));
-    }
-    res.status(200).json({
-      success: true,
-      job,
-    });
-  } catch (error) {
-    return next(new ErrorHandler(`Invalid ID / CastError`, 404));
+  const job = await Job.findById(req.params.id).populate("postedBy", "_id name email");
+  if (!job) {
+    return next(new ErrorHandler("Job not found", 404));
   }
+  res.status(200).json({ success: true, job });
+});
+
+export const recommendJobs = catchAsyncErrors(async (req, res, next) => {
+  // Simple recommendation: match jobs by user's category or skills
+  const user = await User.findById(req.user._id);
+  if (!user) {
+    return next(new ErrorHandler("User not found.", 404));
+  }
+
+  // Example: recommend jobs by user's preferred categories or skills
+  // Adjust field names as per your user schema
+  const userCategories = user.categories || [];
+  const userSkills = user.skills || [];
+
+  // Find jobs matching user's categories or skills
+  const jobs = await Job.find({
+    $or: [
+      { category: { $in: userCategories } },
+      { description: { $regex: userSkills.join("|"), $options: "i" } },
+    ],
+    expired: false,
+  }).limit(10);
+
+  res.status(200).json({
+    success: true,
+    jobs,
+  });
 });
