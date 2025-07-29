@@ -1,3 +1,4 @@
+
 // import app from "./app.js";
 // import cloudinary from "cloudinary";
 // import mongoose from "mongoose";
@@ -68,6 +69,7 @@ import app from "./app.js";
 import cloudinary from "cloudinary";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+
 import { Server } from "socket.io";
 import http from "http";
 import path from "path";
@@ -77,24 +79,27 @@ import userRoutes from "./routes/userRoutes.js";
 
 dotenv.config();
 
+// MongoDB Connection
 mongoose.connect(process.env.DB_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
-.then(() => console.log("MongoDB connected"))
-.catch((err) => console.error("MongoDB connection error:", err));
+  .then(() => console.log("MongoDB connected"))
+  .catch((err) => console.error("MongoDB connection error:", err));
 
+// Cloudinary Config
 cloudinary.v2.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
+// API Routes
 app.use("/api/v1/messages", messageRoutes);
 app.use("/api/v1/user", userRoutes);
 
+// HTTP and Socket.IO setup
 const server = http.createServer(app);
-
 const io = new Server(server, {
   cors: {
     origin: process.env.FRONTEND_URL,
@@ -103,6 +108,7 @@ const io = new Server(server, {
   },
 });
 
+// Socket.IO Events
 io.on("connection", (socket) => {
   console.log("A user connected:", socket.id);
 
@@ -122,16 +128,17 @@ io.on("connection", (socket) => {
   });
 });
 
+// Frontend Serve
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Serve frontend build from ../frontend/dist
 app.use(express.static(path.join(__dirname, "../frontend/dist")));
 
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
 });
 
+// Start Server
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
   console.log(`Server running at port ${PORT}`);
